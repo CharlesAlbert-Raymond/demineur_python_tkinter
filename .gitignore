@@ -2,7 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+#fichier de base
 correction.txt
+interface_partie_old.py
 
 # C extensions
 *.so
