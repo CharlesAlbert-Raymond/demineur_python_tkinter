@@ -54,9 +54,15 @@ class Case:
         return self.nombre_mines_voisines > 0
     
     def marquee(self):
+        """
+        Méthode qui change l'attribut est_marquee à vrai.
+        """
         self.est_marquee = True
     
     def demarquee(self):
+        """
+        Méthode qui change l'attribut est_marquee à faux.
+        """
         self.est_marquee = False
     
     
