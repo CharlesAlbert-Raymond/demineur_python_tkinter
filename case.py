@@ -4,6 +4,7 @@ Module contenant la description de la classe Case. Une case peut contenir une mi
 et être dans différents états de dévoilement.
 
 Auteur: Pascal Germain
+Modification: Charles-Albert Raymond
 """
 
 

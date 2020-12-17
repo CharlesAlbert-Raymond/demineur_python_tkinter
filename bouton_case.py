@@ -1,5 +1,7 @@
 """
-TODO: Ajoutez les docstrings et modifier le code au besoin.
+Module contenant la description de la classe BoutonCase, ces bouton son généré par le module tkinter et font partie du jeu de démineur.
+
+Auteurs: Frédéric Fiset-Tremblay et Charles-Albert Raymond
 """
 
 from tkinter import Button
