@@ -5,28 +5,53 @@ TODO: Ajoutez les docstrings et modifier le code au besoin.
 from tkinter import Button
 
 class BoutonCase(Button):
+    """Cette classe regroupe tout ce qui concerne les attributs des cases ainsi que les méthodes qui serveront
+        à les changer.
+
+    Args:
+        Button : Prend les attributs de la classe bouton de Tkinter.
+        rangee_x : Rangée du grillage du jeu de démineur.
+        colonne_y : Colonne du grillage du jeu de démineur.
+    """
     def __init__(self, parent, rangee_x, colonne_y):
+        """
+        Constructeur de la classe avec des valeures par défauts.
+        """
         self.rangee_x = rangee_x
         self.colonne_y = colonne_y
         super().__init__(parent, text='\U0001F30D', padx=1, pady=3, height=1, width=2)
 
     def nouvelle_partie(self):
+        """
+        Initie les valeures des cases à la valeure de base.
+        """
         self['text'] = '\U0001F30D'
         self.modifier_couleur('black')
 
     def modifier_couleur(self, couleur_texte):
+        """
+        Méthode qui modifie la couleur du texte pour la couleur donné en argument.
+        """
         self['foreground'] = couleur_texte
 
     def est_mine(self):
+        """
+        Méthode qui modifie une case pour mettre un "emoji" de mine.
+        """
         self['text'] = '\U0001F4A3'
 
     def marquer(self):
+        """
+        Méthode qui modifie une case pour mettre un "emoji" de marquage.
+        """
         self['text'] = '\U0001F9E0'
         self.modifier_couleur('red')
 
     def demarquer(self):
-        self['text'] = '\U0001F30D'
-        self.modifier_couleur('black')
+        """
+        Méthode qui modifie une case pour enlever la marque d'une case.
+        """
+        self.nouvelle_partie()
         
     def couleur_chiffre (self, chiffre): 
         if chiffre == 0 : 
