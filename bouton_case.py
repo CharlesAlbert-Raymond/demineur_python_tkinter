@@ -54,6 +54,9 @@ class BoutonCase(Button):
         self.nouvelle_partie()
         
     def couleur_chiffre (self, chiffre): 
+        """
+        Méthode qui modifie la couleur des chiffres selon leur valeur.
+        """
         if chiffre == 0 : 
             self.modifier_couleur('black')
         elif chiffre == 1 :
