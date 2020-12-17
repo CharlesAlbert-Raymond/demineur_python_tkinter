@@ -1,6 +1,7 @@
 """
-TODO: Ce fichier présente une ébauche d'interface pour le TP4. Vous pouvez le modifier à souhait.
-N'oubliez pas de commenter le code!
+Module contenant la description de la classe InterfacePartie, elle est utilisé pour jouer au démineur.
+
+Auteurs: Frédéric Fiset-Tremblay et Charles-Albert Raymond
 """
 from tkinter import Tk, Frame, Button, messagebox, simpledialog, Label
 from tableau import Tableau

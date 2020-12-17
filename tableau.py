@@ -2,7 +2,7 @@
 """
 Module contenant la description de la classe Tableau. Un tableau est utilisé pour jouer une partie du jeu Démineur.
 
-Auteurs: Frédéric Fiset-Tremblay, Charles-Albert Raymond et Arielle Aguemon
+Auteurs: Frédéric Fiset-Tremblay et Charles-Albert Raymond
 """
 
 from case import Case
