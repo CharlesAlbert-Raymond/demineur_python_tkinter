@@ -10,6 +10,21 @@ from case import Case
 import ast
 
 class InterfacePartie(Tk):
+    """Classe qui contient tout ce que l'interface Tkinter a besoin pour fonctionner. 
+
+    Args:
+        self(Tk) : On construit la classe à partir du constructeur du module Tkinter.
+        titre : Sa valeure de base (qui ne change pas) est Démineur.
+        resizable : 
+        dimension_rangee: 
+        dimension_colonne:
+        nombres_mines:
+        nombre_de_tour:
+        dictionnaire_boutons:
+        tableau_mines:
+        est_en_mode_creation: De base faux pour être activé à vrai lorque le jeu est en mode création.
+
+    """
     def __init__(self):
         super().__init__()
 
@@ -43,6 +58,9 @@ class InterfacePartie(Tk):
         bouton_mode_creation.grid(row=0, column=5, padx=5, pady=5)
 
     def valider_nouvelle_partie(self):
+        """
+        Cette méthode envoie un message qui affiche un message de confirmation pour commencer une nouvelle partie.
+        """
         if self.dictionnaire_boutons != {}:
             msg = messagebox.askquestion(title='Attention', message="Votre partie sera effacée si elle n'est pas sauvegarder", icon="warning")
             if msg == 'yes':
@@ -52,6 +70,9 @@ class InterfacePartie(Tk):
             self.nouvelle_partie()
 
     def nouvelle_partie(self):
+        """
+        Cette méthode initialise une nouvelle partie.
+        """
         self.est_en_mode_creation = False
         self.demander_dimension(est_en_mode_creation= self.est_en_mode_creation)
         self.tableau_mines = Tableau(self.dimension_rangee, self.dimension_colonne, self.nombre_mines)
@@ -76,7 +97,9 @@ class InterfacePartie(Tk):
 
 
     def devoiler_case(self, event):
-
+        """
+        Cette méthode s'occupe de dévoiler les case lorsque celle-ci sont cliqués par le joueur.
+        """
         bouton = event.widget
         self.nombre_de_tour += 1
         self.compteur['text'] = "Nombre de tours : {}".format(self.nombre_de_tour)
@@ -88,6 +111,10 @@ class InterfacePartie(Tk):
             self.devoiler_case_automatique(bouton.rangee_x, bouton.colonne_y)
 
     def marquer_case(self, event):
+        """
+        Cette méthode s'occupe de mettre un marqueur sur les case lorsque celle-ci sont cliqués
+        (clique droit de la souris) par le joueur.
+        """
         bouton = event.widget
         case = self.tableau_mines.obtenir_case(bouton.rangee_x, bouton.colonne_y)
         if not case.est_devoilee and not case.est_marquee:
@@ -98,10 +125,14 @@ class InterfacePartie(Tk):
             case.demarquee()
 
     def devoiler_case_automatique(self, rangee_x, colonne_y):
+        """
+        Cette méthode s'occupe de dévoiler les cases voisines à une case cliqué lorsque 
+        celle-ci contienne '0' mine voisine.
+        """
         bouton = self.dictionnaire_boutons[(rangee_x, colonne_y)]
         case = self.tableau_mines.obtenir_case(bouton.rangee_x, bouton.colonne_y)
         if not case.est_minee:
-            bouton.modifier_couleur('black')
+            bouton.couleur_chiffre(case.nombre_mines_voisines)
             bouton['text'] = case.nombre_mines_voisines
             if not case.est_devoilee:
                 case.est_devoilee = True
@@ -114,6 +145,9 @@ class InterfacePartie(Tk):
                         self.devoiler_case_automatique(voisins[0], voisins[1])
 
     def instruction(self):
+        """
+        Crée une fenêtre qui indique les instructions du jeu au joueur.
+        """
         pass
 
     def sauvegarde(self):
@@ -215,6 +249,9 @@ class InterfacePartie(Tk):
 
 
     def quitter(self):
+        """
+        Crée une fenêtre qui indique au joueur s'il veut vraiment quitter, et s'il confirme la fenetre se ferme.
+        """
         MsgBox = messagebox.askquestion("Quitter?", "Voulez-vous vraiment quitter?", icon="warning")
         if MsgBox == 'yes':
             self.quit()
@@ -227,6 +264,7 @@ class InterfacePartie(Tk):
             if self.tableau_mines.dictionnaire_cases[case].est_minee:
                 BoutonCase.est_mine(bouton)
             else:
+                bouton.couleur_chiffre(self.tableau_mines.dictionnaire_cases[case].nombre_mines_voisines)
                 bouton['text'] = self.tableau_mines.dictionnaire_cases[case].nombre_mines_voisines
 
 
