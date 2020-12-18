@@ -148,7 +148,7 @@ class InterfacePartie(Tk):
         """
         Crée une fenêtre qui indique les instructions du jeu au joueur.
         """
-        pass
+        messagebox.showinfo(title='Instruction', message="1. Cliquer les cases pour dévoiler ce qui est derrière. \n2. Si un chiffre est affiché, celui-ci vous indique combien de bombe sont adjactente à la case cliquer. \n3. Vous pouvez marquer une case que vous soupconnez être une bombe pour vous aider déminner le tableau. \n4. Vous gagnez lorsqu'il ne reste que des mines dans le tableau.")
 
     def sauvegarde(self):
         if self.dictionnaire_boutons == {}:
