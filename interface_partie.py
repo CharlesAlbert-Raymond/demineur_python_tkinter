@@ -5,8 +5,8 @@ N'oubliez pas de commenter le code!
 from tkinter import Tk, Frame, Button, messagebox, simpledialog, Label,  filedialog
 from tableau import Tableau
 from bouton_case import BoutonCase
-from chaine_a_liste import chaine_a_liste
 from case import Case
+import ast
 
 class InterfacePartie(Tk):
     def __init__(self):
@@ -18,11 +18,12 @@ class InterfacePartie(Tk):
         self.dimension_rangee, self.dimension_colonne, self.nombre_mines, self.nombre_de_tour = 0,0,0,0
         self.dictionnaire_boutons = {}
         self.tableau_mines = Tableau()
+        self.est_en_mode_creation = False
 
         bouton_frame = Frame(self)
         bouton_frame.grid()
 
-        bouton_nouvelle_partie = Button(bouton_frame, text='Nouvelle partie', command=self.nouvelle_partie)
+        bouton_nouvelle_partie = Button(bouton_frame, text='Nouvelle partie', command=self.valider_nouvelle_partie)
         bouton_nouvelle_partie.grid(row=0, column=0, padx=5, pady=5)
 
         bouton_quitter = Button(bouton_frame, text="Quitter", command=self.quitter)
@@ -37,9 +38,21 @@ class InterfacePartie(Tk):
         bouton_charger = Button(bouton_frame, text='Charger une partie', command=self.valider_charger_partie)
         bouton_charger.grid(row=0, column=4, padx=5, pady=5)
 
-    def nouvelle_partie(self):
+        bouton_mode_creation = Button(bouton_frame, text='Mode Creation', command=self.valider_mode_creation)
+        bouton_mode_creation.grid(row=0, column=5, padx=5, pady=5)
 
-        self.demander_dimension()
+    def valider_nouvelle_partie(self):
+        if self.dictionnaire_boutons != {}:
+            msg = messagebox.askquestion(title='Attention', message="Votre partie sera effacée si elle n'est pas sauvegarder", icon="warning")
+            if msg == 'yes':
+                self.cadre.destroy()
+                self.nouvelle_partie()
+        else :
+            self.nouvelle_partie()
+
+    def nouvelle_partie(self):
+        self.est_en_mode_creation = False
+        self.demander_dimension(est_en_mode_creation= self.est_en_mode_creation)
         self.tableau_mines = Tableau(self.dimension_rangee, self.dimension_colonne, self.nombre_mines)
 
         self.cadre = Frame(self)
@@ -104,7 +117,7 @@ class InterfacePartie(Tk):
 
     def sauvegarde(self):
         if self.dictionnaire_boutons == {}:
-            messagebox.message(title='Erreur', message='Aucune partie en cours')
+            messagebox.Message(title='Erreur', message='Aucune partie en cours')
 
         nombre_range = self.dimension_rangee
         nombre_colonne = self.dimension_colonne
@@ -142,6 +155,8 @@ class InterfacePartie(Tk):
         else :
             self.charger()
 
+
+
     def charger(self):
 
 
@@ -150,9 +165,9 @@ class InterfacePartie(Tk):
         self.dimension_rangee = int(nom_fichier.readline())
         self.dimension_colonne = int(nom_fichier.readline())
         self.nombre_de_tour = int(nom_fichier.readline())
-        position_mines = chaine_a_liste(list(nom_fichier.readline().strip('\n')))
-        position_cases_devoilees = chaine_a_liste(nom_fichier.readline().strip('\n'))
-        position_cases_marquees = chaine_a_liste(nom_fichier.readline().strip('\n'))
+        position_mines = ast.literal_eval(nom_fichier.readline().strip('\n'))
+        position_cases_devoilees = ast.literal_eval(nom_fichier.readline().strip('\n'))
+        position_cases_marquees = ast.literal_eval(nom_fichier.readline().strip('\n'))
 
         nom_fichier.close()
 
@@ -228,15 +243,82 @@ class InterfacePartie(Tk):
             self.quit()
 
 
-    def demander_dimension(self):
+    def demander_dimension(self, est_en_mode_creation):
         self.dimension_rangee = simpledialog.askinteger(title="Combien de rangée", prompt="", minvalue=1)
         if self.dimension_rangee == None:
             self.dimension_rangee=1
         self.dimension_colonne = simpledialog.askinteger(title="Combien de colonne", prompt="", minvalue=1)
         if self.dimension_colonne == None:
             self.dimension_colonne=1
-        self.nombre_mines = simpledialog.askinteger(title="Combien de mines", prompt="", minvalue=0, maxvalue=self.dimension_rangee * self.dimension_colonne)
-        if self.nombre_mines == None:
-            self.nombre_mines=1
+        if not est_en_mode_creation:
+            self.nombre_mines = simpledialog.askinteger(title="Combien de mines", prompt="", minvalue=0, maxvalue=self.dimension_rangee * self.dimension_colonne)
+            if self.nombre_mines == None:
+                self.nombre_mines=1
+
+    def valider_mode_creation(self):
+        if self.dictionnaire_boutons != {}:
+            msg = messagebox.askquestion(title='Attention', message="Votre partie sera effacée si elle n'est pas sauvegarder", icon="warning")
+            if msg == 'yes':
+                self.cadre.destroy()
+                self.mode_creation()
+        else :
+            self.mode_creation()
+
+    def mode_creation(self):
+        self.nombre_de_tour = 0
+        self.est_en_mode_creation = True
+        self.demander_dimension(est_en_mode_creation= self.est_en_mode_creation)
+        self.tableau_mines = Tableau(self.dimension_rangee, self.dimension_colonne, nombre_mines=0)
+
+        self.cadre = Frame(self)
+        self.cadre.grid(padx=20, pady=20)
+
+        self.dictionnaire_boutons = {}
+
+        for i in range(self.tableau_mines.dimension_rangee):
+            for j in range(self.tableau_mines.dimension_colonne):
+                bouton = BoutonCase(self.cadre, i + 1, j + 1)
+                bouton.grid(row=i, column=j)
+                bouton.bind('<ButtonRelease-1>', self.ajouter_mine_mode_creation)
+                self.dictionnaire_boutons[(i + 1, j + 1)] = bouton
+
+        bouton_save_creation = Button(self.cadre, text='Sauvegarder le Tableau création', command=self.sauvegarder_creation)
+        bouton_save_creation.grid(row=self.tableau_mines.dimension_rangee + 1, column=self.tableau_mines.dimension_colonne + 1, padx=5, pady=5)
+
+        for case in self.tableau_mines.dictionnaire_cases.keys():
+            bouton = self.dictionnaire_boutons[case]
+            bouton['text'] = self.tableau_mines.dictionnaire_cases[case].nombre_mines_voisines
+
+
+    def ajouter_mine_mode_creation(self, event):
+        bouton = event.widget
+        case = self.tableau_mines.obtenir_case(bouton.rangee_x, bouton.colonne_y)
+        if not case.est_minee:
+            BoutonCase.est_mine(bouton)
+            case.ajouter_mine()
+            voisins = self.tableau_mines.obtenir_voisins(bouton.rangee_x, bouton.colonne_y)
+            for i in voisins:
+                self.tableau_mines.dictionnaire_cases[i].ajouter_une_mine_voisine()
+                if not self.tableau_mines.obtenir_case(i[0],i[1]).est_minee:
+                    bouton_voisin = self.dictionnaire_boutons[i]
+                    bouton_voisin["text"] = self.tableau_mines.dictionnaire_cases[i].nombre_mines_voisines
+        else :
+            case.est_minee = False
+            voisins = self.tableau_mines.obtenir_voisins(bouton.rangee_x, bouton.colonne_y)
+            bouton["text"] = self.tableau_mines.dictionnaire_cases[bouton.rangee_x, bouton.colonne_y].nombre_mines_voisines
+            for i in voisins:
+                self.tableau_mines.obtenir_case(i[0],i[1]).nombre_mines_voisines -= 1
+                if not self.tableau_mines.obtenir_case(i[0],i[1]).est_minee:
+                    bouton_voisin = self.dictionnaire_boutons[i]
+                    bouton_voisin["text"] = self.tableau_mines.dictionnaire_cases[i].nombre_mines_voisines
+
+
+    
+    def sauvegarder_creation(self):
+        for bouton in self.dictionnaire_boutons.values():
+            case = self.tableau_mines.obtenir_case(bouton.rangee_x, bouton.colonne_y)
+            case.est_devoilee = False
+        self.sauvegarde()
+
 
 
