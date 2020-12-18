@@ -101,7 +101,7 @@ class InterfacePartie(Tk):
         bouton = self.dictionnaire_boutons[(rangee_x, colonne_y)]
         case = self.tableau_mines.obtenir_case(bouton.rangee_x, bouton.colonne_y)
         if not case.est_minee:
-            bouton.modifier_couleur('black')
+            bouton.couleur_chiffre(case.nombre_mines_voisines)
             bouton['text'] = case.nombre_mines_voisines
             if not case.est_devoilee:
                 case.est_devoilee = True
@@ -227,6 +227,7 @@ class InterfacePartie(Tk):
             if self.tableau_mines.dictionnaire_cases[case].est_minee:
                 BoutonCase.est_mine(bouton)
             else:
+                bouton.couleur_chiffre(self.tableau_mines.dictionnaire_cases[case].nombre_mines_voisines)
                 bouton['text'] = self.tableau_mines.dictionnaire_cases[case].nombre_mines_voisines
 
 
